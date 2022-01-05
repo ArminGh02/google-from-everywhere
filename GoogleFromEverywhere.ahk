@@ -34,21 +34,40 @@ GetSelectedText() {
     Clipboard := ""
     Send, {CtrlDown}c{CtrlUp}
     ClipWait, 0, false
-    selection := Clipboard
 
     if ErrorLevel {
-        Goto, ret
+        return Fail(oldClipboard)
     }
+
+    selection := Clipboard
 
     Clipboard := ""
-    Send, {ShiftDown}{Right}{ShiftUp}{CtrlDown}c{CtrlUp}{ShiftDown}}{Left}{ShiftUp}
+    Send, {ShiftDown}{Right}{ShiftUp}{CtrlDown}c{CtrlUp}{ShiftDown}{Left}{ShiftUp}
     ClipWait, 0, false
 
-    if ErrorLevel or !InStr(Clipboard, selection) {
-        selection := ""
+    if ErrorLevel {
+        return Fail(oldClipboard)
     }
 
-ret:
+    if !InStr(Clipboard, selection) {
+        Clipboard := ""
+        Send, {ShiftDown}{Left}{ShiftUp}{CtrlDown}c{CtrlUp}{ShiftDown}{Right}{ShiftUp}
+        ClipWait, 0, false
+
+        if ErrorLevel {
+            return Fail(oldClipboard)
+        }
+
+        if !InStr(Clipboard, selection) {
+            return Fail(oldClipboard)
+        }
+    }
+
     Clipboard := oldClipboard
     return selection
+}
+
+Fail(oldClipboard) {
+    Clipboard := oldClipboard
+    return ""
 }
