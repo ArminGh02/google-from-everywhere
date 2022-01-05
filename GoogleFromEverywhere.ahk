@@ -54,11 +54,7 @@ GetSelectedText() {
         Send, {ShiftDown}{Left}{ShiftUp}{CtrlDown}c{CtrlUp}{ShiftDown}{Right}{ShiftUp}
         ClipWait, 0, false
 
-        if ErrorLevel {
-            return Fail(oldClipboard)
-        }
-
-        if !InStr(Clipboard, selection) {
+        if ErrorLevel or !InStr(Clipboard, selection) {
             return Fail(oldClipboard)
         }
     }
