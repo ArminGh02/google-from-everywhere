@@ -11,7 +11,7 @@ SetWorkingDir %A_ScriptDir%
 
 GoogleSelection() {
     searchQuery := GetSelectedText()
-    if (!searchQuery) {
+    if !searchQuery {
         Run, www.google.com
         return
     }
@@ -21,7 +21,7 @@ GoogleSelection() {
 
 DefineSelection() {
     word := GetSelectedText()
-    if (!word) {
+    if !word {
         Run, www.google.com/search?q=google+dictionary
         return
     }
@@ -30,11 +30,25 @@ DefineSelection() {
 }
 
 GetSelectedText() {
-    tmp := ClipboardAll
+    oldClipboard := ClipboardAll
     Clipboard := ""
     Send, {CtrlDown}c{CtrlUp}
     ClipWait, 0, false
-    res := Clipboard
-    Clipboard := tmp
-    return res
+    selection := Clipboard
+
+    if ErrorLevel {
+        Goto, ret
+    }
+
+    Clipboard := ""
+    Send, {ShiftDown}{Right}{ShiftUp}{CtrlDown}c{CtrlUp}{ShiftDown}}{Left}{ShiftUp}
+    ClipWait, 0, false
+
+    if ErrorLevel or !InStr(Clipboard, selection) {
+        selection := ""
+    }
+
+ret:
+    Clipboard := oldClipboard
+    return selection
 }
