@@ -10,7 +10,7 @@ SetWorkingDir %A_ScriptDir%
 #+w::DefineSelection()
 
 GoogleSelection() {
-    searchQuery := GetSelectedText()
+    searchQuery := Trim(GetSelectedText())
     if !searchQuery {
         Run, www.google.com
         return
@@ -20,7 +20,7 @@ GoogleSelection() {
 }
 
 DefineSelection() {
-    word := GetSelectedText()
+    word := Trim(GetSelectedText())
     if !word {
         Run, www.google.com/search?q=google+dictionary
         return
